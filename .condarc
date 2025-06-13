@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - nodefaults  # Explicitly exclude the defaults (non-free) channel
+
+channel_priority: strict
+
+license_allowlist:
+  - BSD
+  - MIT
+  - Apache
+  - GPL
+  - LGPL
+  - ISC
+  - CC0
+  - Unlicense
