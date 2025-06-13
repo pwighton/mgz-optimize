@@ -56,7 +56,7 @@ def main():
     try:
         mgz = sf.load_volume(args.infile)
     except Exception as e:
-        logger.warning(f'Caught an exception when trying to load {infile}')
+        logger.warning(f'Caught an exception when trying to load {args.infile}')
         logger.warning(f'{e}')
         logger.warning(f'Skipping this file')
         return 1

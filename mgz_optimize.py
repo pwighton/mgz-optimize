@@ -5,11 +5,12 @@ import os
 import argparse
 import logging
 import pathlib
+import traceback
 
 import numpy as np
 import surfa as sf
 
-from can-convert-mgz-to-int import can_convert_to_int
+from can_convert_mgz_to_int import can_convert_to_int
 
 script_desc = 'Optimizes integer-based mgz files, by:' + \
               ' 1) saving the file as the smallest possible dtype; and' + \
@@ -143,7 +144,7 @@ def check_args(args):
             raise ValueError(f'inpath is neither a file nor a directory: {args.inpath}')
     except (OSError, ValueError, AssertionError) as e:
         error_msg = str(e)
-        logger.error(f'caught an exception: {error_msg}')
+        logger.error(f'caught an exception: {error_msg}', exc_info=True)
         raise
     return infilelist, outfilelist, intent
             
@@ -175,7 +176,7 @@ def optimize_mgz(infile, outfile, intent=-1, force_convert_to_ints=False):
         mgz = sf.load_volume(infile)
     except Exception as e:
         logger.warning(f'Caught an exception when trying to load {infile}')
-        logger.warning(f'{e}')
+        logger.warning(f'{e}', exc_info=True)
         logger.warning(f'Skipping this file')
         return
     logger.debug(f'metadata for {infile}: {mgz.metadata}')
