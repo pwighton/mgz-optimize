@@ -10,6 +10,9 @@ import traceback
 import numpy as np
 import surfa as sf
 
+# See https://github.com/freesurfer/surfa/blob/0ab851a36703458023d9ada9cac466d045829399/surfa/core/framed.py#L11C7-L11C25
+from surfa.core.framed import FramedArrayIntents
+
 from can_convert_mgz_to_int import can_convert_to_int
 
 script_desc = 'Optimizes integer-based mgz files, by:' + \
@@ -42,21 +45,47 @@ mgz_label_files = [
   'aparc.a2005s+aseg.mgz',
   'aparc.a2009s+aseg.mgz',
   'apas+head.mgz',
+  'apas+head.samseg.mgz',
   'aseg.auto.mgz',
   'aseg.auto_noCCseg.mgz',
   'aseg.mgz',
   'aseg.presurf.hypos.mgz',
   'aseg.presurf.mgz',
+  'brainstemSsLabels.v13.FSvoxelSpace.mgz',
+  'brainstemSsLabels.v13.mgz',
   'ctrl_pts.mgz',
   'filled.auto.mgz',
   'filled.mgz',
   'gtmseg.mgz',
+  'hypothalamic_subunits_seg.v1.mgz',
+  'lh.hippoAmygLabels-T1.v22.CA.FSvoxelSpace.mgz',
+  'lh.hippoAmygLabels-T1.v22.CA.mgz',
+  'lh.hippoAmygLabels-T1.v22.FS60.FSvoxelSpace.mgz',
+  'lh.hippoAmygLabels-T1.v22.FS60.mgz',
+  'lh.hippoAmygLabels-T1.v22.FSvoxelSpace.mgz',
+  'lh.hippoAmygLabels-T1.v22.HBT.FSvoxelSpace.mgz',
+  'lh.hippoAmygLabels-T1.v22.HBT.mgz',
+  'lh.hippoAmygLabels-T1.v22.mgz',
   'lh.ribbon.mgz',
+  'mca-dura.mgz',
+  'rh.hippoAmygLabels-T1.v22.CA.FSvoxelSpace.mgz',
+  'rh.hippoAmygLabels-T1.v22.CA.mgz',
+  'rh.hippoAmygLabels-T1.v22.FS60.FSvoxelSpace.mgz',
+  'rh.hippoAmygLabels-T1.v22.FS60.mgz',
+  'rh.hippoAmygLabels-T1.v22.FSvoxelSpace.mgz',
+  'rh.hippoAmygLabels-T1.v22.HBT.FSvoxelSpace.mgz',
+  'rh.hippoAmygLabels-T1.v22.HBT.mgz',
+  'rh.hippoAmygLabels-T1.v22.mgz'
   'rh.ribbon.mgz',
   'ribbon.mgz',
+  'synthseg.mgz',
+  'synthseg.rca.mgz',
+  'vsinus.mgz',
   'subcort.mask.1mm.mgz',
   'subcort.mask.mgz',
   'surface.defects.mgz',
+  'ThalamicNuclei.v13.T1.FSvoxelSpace.mgz',
+  'ThalamicNuclei.v13.T1.mgz'
   'wm.asegedit.mgz',
   'wmparc.mgz'
 ]
@@ -99,16 +128,16 @@ def check_args(args):
     intent = None
 
     # Intent:
-    #   - 0: Always set intent code to 0 (imaging data)
-    #   - 1: Always set intent code to 1 (label data)
-    #   - -1: Auto-detect intent code from filename
+    #   - FramedArrayIntents.mri: Always set intent code to 0 (imaging data)
+    #   - FramedArrayIntents.label: Always set intent code to 1 (label data)
+    #   - FramedArrayIntents.unknown: Auto-detect intent code from filename
     #   - None: Never alter intent code
     if args.is_imaging_data:
-        intent = 0
+        intent = FramedArrayIntents.mri
     elif args.is_label_data:
-        intent = 1
+        intent = FramedArrayIntents.label
     elif args.auto_detect_intent:
-        intent = -1
+        intent = FramedArrayIntents.unknown
         
     try:
         inpath = pathlib.Path(args.inpath)
@@ -161,11 +190,11 @@ def guess_intent_code_from_filename(filename):
     # Strip the directory info
     file = os.path.basename(filename)
     if file in mgz_label_files:
-        return 1
+        return FramedArrayIntents.label
     else:
         return None
 
-def optimize_mgz(infile, outfile, intent=-1, force_convert_to_ints=False):
+def optimize_mgz(infile, outfile, intent=FramedArrayIntents.unknown, force_convert_to_ints=False):
     logger.debug(f'infile:  {infile}')
     logger.debug(f'outfile: {outfile}')
     logger.debug(f'intent:  {intent}')
@@ -196,7 +225,7 @@ def optimize_mgz(infile, outfile, intent=-1, force_convert_to_ints=False):
         # if intent code is already set, and force is not set; skip
         if intent is None:
             pass
-        elif intent == -1:
+        elif intent == FramedArrayIntents.unknown:
             # try to guess the intent code from the filename
             intent = guess_intent_code_from_filename(infile)
             logger.info(f'intent was None, so I guessed from the filename that it should be {intent}')
@@ -234,4 +263,5 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    print(FramedArrayIntents())
+    #sys.exit(main())
