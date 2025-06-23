@@ -263,5 +263,4 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    print(FramedArrayIntents())
-    #sys.exit(main())
+    sys.exit(main())
