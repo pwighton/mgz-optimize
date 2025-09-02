@@ -10,14 +10,22 @@ Optimize [MGZ files](https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/MghFor
   - [python defintion of intent codes](https://github.com/freesurfer/surfa/blob/0ab851a36703458023d9ada9cac466d045829399/surfa/core/framed.py#L11)
 
 
-Setup:
-- v3.8.13 ensures it's the same version as fspython
+## Setup:
 
+### Standalone
 ```
 conda create --name mgz-optimize python=3.8.13
 conda activate mgz-optimize
-pip install ./requirements.txt
+pip install -r ./requirements.txt
 ```
+
+Notes:
+- v3.8.13 ensures it's the same version as fspython
+
+### With FreeSurfer
+
+- Initialize your FreeSurfer environment
+- prepend `fspython` to the command, e.g. `fsptyhon ./mgz_optimize --help`
 
 Todo:
   - reference actual intent code (sf.core.framed.FramedArrayIntents) instead of hard coded values
